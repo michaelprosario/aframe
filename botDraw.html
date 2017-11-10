@@ -1,0 +1,72 @@
+<html>
+
+<head>
+
+	<script src="js/aframe.min.js"></script>
+	<script src="https://rawgit.com/feiss/aframe-environment-component/master/dist/aframe-environment-component.min.js"></script>
+	<script src="js/aframe-bot.js"></script>
+	<script>
+		function ninetyNineRedBalloons() {
+			//This is my small tribute to the epic 80's song.
+
+			//Create an instance of a bot
+			var bot = new Bot();
+			var i;
+
+			bot.drawColor = "red";
+			for (i = 0; i < 99; i++) {
+				var x = Math.random() * 20 - 10;
+				var y = Math.random() * 20;
+				var z = Math.random() * 20 - 10;
+				var c = Math.random();
+
+				if (c > 0.5)
+					bot.drawColor = "red";
+				else
+					bot.drawColor = "darkred";
+
+				bot.drawSphereAt(1, x, y, z);
+			}
+		}
+
+		function demo1() {
+			var bot = new Bot();
+			var i;
+			var k = 0.2
+			bot.drawColor = "brown"
+			for (i = 0; i < 250; i++) {
+				bot.drawBox(5, k, 5);
+				bot.turn(45);
+				bot.moveUp(k);
+			}
+		}
+
+		AFRAME.registerComponent('botdraw', {
+			schema: { type: 'string' },
+			init: function () {
+				demo1();
+			}
+		});
+
+
+
+	</script>
+</head>
+
+<body>
+	<a-scene botdraw="true">
+
+		<a-assets>
+			<img id="groundTexture" src="images/floor.jpg">
+			<img id="skyTexture" src="images/sky.jpg">
+
+		</a-assets>
+
+
+		<a-entity light="color: #white; intensity: 1.5" position="-10 10 -10"></a-entity>
+		<a-cylinder id="ground" src="#groundTexture" radius="30" height="0.1"></a-cylinder>
+		<a-sky id="background" src="#skyTexture" theta-length="90" radius="30"></a-sky>
+
+	</a-scene>
+</body>
+</html>
