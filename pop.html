@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+</head>
+<script>
+    AFRAME.registerComponent('set-targets', {
+        schema: { type: 'number' },
+
+        init: function () {
+
+            var sceneEl = document.querySelector('a-scene');
+            var number = parseInt(this.data);
+            for (let i = 0; i < number; i++) {
+                // pick random location
+                let spaceFactor = 10;
+                let halfSpaceFactor = spaceFactor / 2;
+                x = Math.floor(Math.random() * spaceFactor - halfSpaceFactor);
+                y = Math.floor(Math.random() * spaceFactor);
+                z = Math.floor(Math.random() * spaceFactor - halfSpaceFactor);
+                boxSize = 0.5;
+
+                // create box                
+                var entityEl = document.createElement('a-entity');
+                entityEl.setAttribute('geometry', {
+                    primitive: 'box',
+                    height: boxSize,
+                    width: boxSize,
+                    depth: boxSize
+                });
+
+                entityEl.addEventListener('click', function () {
+                    entityEl.setAttribute('scale', { x: 2, y: 2, z: 2 });
+                });
+
+                entityEl.setAttribute('position', { x: x, y: y, z: z });
+                sceneEl.appendChild(entityEl);
+            }
+        }
+    });    
+</script>
+
+<body>
+    <a-scene>
+
+        <a-entity set-targets="30"></a-entity>
+        <a-camera>
+            <a-cursor></a-cursor>
+        </a-camera>
+    </a-scene>
+</body>
+
+</html>
