@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+
+  <script>
+
+    /**
+     * Based on a grid context, return a 2D point.
+     * @param {any} gridContext
+     * @returns {any}
+     */
+    function getGridCellPosition(gridContext)
+    {
+      var x1 = gridContext.gridX*gridContext.blockSize  + gridContext.elementPosition.x;
+      var y1 = gridContext.gridY*gridContext.blockSize  + gridContext.elementPosition.y;
+      return {x: x1, y: y1}      
+    }
+
+    function makeWall(gridContext)
+    {      
+      var el = document.createElement('a-box');
+      var position = getGridCellPosition(gridContext);
+      el.setAttribute("position",`${position.x} 1 ${position.y}`);
+      el.setAttribute("scale",`${gridContext.blockSize} ${gridContext.height} ${gridContext.blockSize}`);
+      gridContext.sceneEl.appendChild(el);
+
+      makeCeiling(gridContext);
+    }
+
+    function makeWallWithWindow(gridContext)
+    {
+      var el = document.createElement('a-box');
+      var position = getGridCellPosition(gridContext);
+      el.setAttribute("position",`${position.x} 1 ${position.y}`);
+      el.setAttribute("scale",`${gridContext.blockSize} ${gridContext.blockSize} ${gridContext.blockSize}`);
+      gridContext.sceneEl.appendChild(el);
+
+      makeCeiling(gridContext);
+    }    
+
+    function makeCeiling(gridContext)
+    {
+      var el = document.createElement('a-box');
+      var k = gridContext.height - gridContext.blockSize;
+      var position = getGridCellPosition(gridContext);
+
+      el.setAttribute("position",`${position.x} ${k} ${position.y}`);
+      el.setAttribute("scale",`${gridContext.blockSize} ${gridContext.blockSize} ${gridContext.blockSize}`);
+      el.setAttribute("color","purple");
+      gridContext.sceneEl.appendChild(el);
+    }
+
+
+    /**
+     * Create grid of a space.  Data will be used to create space from boxes.
+     * @returns {any}
+     */
+    function grid1(){
+      return [
+          '**************##****',
+          '*     *            *',
+          '*     *            *',
+          '*     ******  ******',
+          '#                  *',
+          '*                  *',
+          '#     *****  ****  #',
+          '*     *            *',
+          '                   # ',
+          '*     *            *',
+          '*     *****  *******',
+          '#                  *',
+          '*                  *',
+          '********* **********'
+        ]            
+    }
+
+    function grid2(){
+      return [
+          '**************##****',
+          '#                  *',
+          '*                  *',
+          '#                  *',
+          '*                  *',
+          '********* **********'
+        ]            
+    }
+
+    var GRID_WALL = '*';
+    var GRID_ROOF = ' ';
+    var GRID_WALL_WINDOW = '#';
+    AFRAME.registerComponent('grid-space', {
+      
+      init: function () {
+        
+        var gridFunction = this.el.getAttribute('grid-function'); 
+        if(!gridFunction)
+        {    
+          gridFunction = 'grid2';   
+        }
+        var grid = eval(gridFunction + "()");
+        console.log(grid)
+        
+        var sceneEl = document.querySelector('a-scene');        
+
+        console.log(this.el.getAttribute("position").x);
+        var x = 0;
+        var y = 0;
+        var blockSize = 2;
+        var height = blockSize * 4;
+        var elementX = this.el.getAttribute("position").x;
+        var elementY = this.el.getAttribute("position").y;
+        var elementPosition = { x: elementX, y: elementY };
+        for(x=0; x<grid.length; x++)
+        {
+            for(y=0; y<grid[x].length;  y++)
+            {
+              var gridValue = grid[x][y];
+              var gridContext = {
+                sceneEl: sceneEl,
+                gridX: x,
+                gridY: y,
+                height: height,
+                blockSize: blockSize,
+                elementPosition: elementPosition
+              }
+              
+              if(gridValue === GRID_WALL)
+              {
+                makeWall(gridContext);
+              }
+              else if(gridValue == GRID_ROOF)
+              {
+                makeCeiling(gridContext);
+              }
+              else if(gridValue == GRID_WALL_WINDOW)
+              {
+                makeWallWithWindow(gridContext);
+              }else{
+                console.log('gridValue not handled => ' + gridValue);
+              }
+
+            }
+        }
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <a-scene>
+    <a-entity environment="preset: tron"></a-entity>
+    
+    <a-entity grid-space grid-function="grid2"  >      
+    </a-entity>
+    
+    <a-entity grid-space grid-function="grid1" position="40 0 40"  >      
+    </a-entity>
+  </a-scene>
+</body>
+
+</html>

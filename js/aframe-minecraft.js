@@ -61,7 +61,7 @@ AFRAME.registerComponent('random-color', {
         var myCursor = document.getElementById("cursor");
         const data = myCursor.data;
         const el = myCursor;
-
+        debugger;
         var point = myCursor.components.cursor.intersection.point;
         const spawnEl = document.createElement('a-entity');
 
