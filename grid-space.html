@@ -32,6 +32,17 @@
       makeCeiling(gridContext);
     }
 
+    function makePillar(gridContext)
+    {      
+      var el = document.createElement('a-cylinder');
+      var position = getGridCellPosition(gridContext);
+      el.setAttribute("position",`${position.x} 1 ${position.y}`);
+      el.setAttribute("scale",`${gridContext.blockSize/2} ${gridContext.height} ${gridContext.blockSize/2}`);
+      gridContext.sceneEl.appendChild(el);
+
+      makeCeiling(gridContext);
+    }    
+
     function makeWallWithWindow(gridContext)
     {
       var el = document.createElement('a-box');
@@ -82,17 +93,21 @@
     function grid2(){
       return [
           '**************##****',
-          '#                  *',
+          '*                  *',          
+          '*                  *',          
           '*                  *',
-          '#                  *',
-          '*                  *',
-          '********* **********'
+          '********* **********',
+          '                    ',
+          '                    ',
+          '                    ',                              
+          '@    @    @    @   @'          
         ]            
     }
 
     var GRID_WALL = '*';
     var GRID_ROOF = ' ';
     var GRID_WALL_WINDOW = '#';
+    var GRID_PILLAR = '@';
     AFRAME.registerComponent('grid-space', {
       
       init: function () {
@@ -137,10 +152,15 @@
               {
                 makeCeiling(gridContext);
               }
+              else if(gridValue == GRID_PILLAR)
+              {
+                makePillar(gridContext);
+              }
               else if(gridValue == GRID_WALL_WINDOW)
               {
                 makeWallWithWindow(gridContext);
               }else{
+
                 console.log('gridValue not handled => ' + gridValue);
               }
 
